@@ -12,7 +12,7 @@ from components.cards import ai_terminal, hero, insight_card, metric_card, secti
 from components.charts import area_chart, bar_chart, choropleth, gauge, heatmap, line_chart, radar_chart, scatter_bubble
 from components.sidebar import render_sidebar
 from utils.data_loader import latest_snapshot, load_data
-from utils.helpers import format_compact, format_percent, load_css, trend_delta
+from utils.helpers import format_compact, format_percent, load_css, safe_select_columns, trend_delta
 from utils.preprocess import correlation_frame, country_latest, filter_data, region_summary, top_n, yearly_global
 
 
@@ -223,7 +223,8 @@ def country_comparison(df: pd.DataFrame, top_count: int) -> None:
         with tab:
             leaders = top_n(latest, metric, top_count)
             st.plotly_chart(bar_chart(leaders, metric, "country", title=f"Top {top_count} by {metric.replace('_', ' ').title()}"), use_container_width=True)
-            st.dataframe(leaders[["country", "region", metric, "gym_memberships", "total_health_club_revenue_usd"]], use_container_width=True)
+            cols = ["country", "region", metric, "gym_memberships", "total_health_club_revenue_usd"]
+            st.dataframe(safe_select_columns(leaders, cols), use_container_width=True)
 
 
 def health_obesity_analytics(df: pd.DataFrame) -> None:

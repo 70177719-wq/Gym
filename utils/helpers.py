@@ -72,3 +72,18 @@ def clean_multiselect(values: Iterable[str] | None, all_values: list[str]) -> li
         return all_values
     selected = [value for value in values if value in all_values]
     return selected or all_values
+
+
+def unique_ordered(items: Iterable[str]) -> list[str]:
+    """Return a list with duplicates removed, preserving first-seen order."""
+    return list(dict.fromkeys(items))
+
+
+def safe_select_columns(df: pd.DataFrame, columns: Iterable[str]) -> pd.DataFrame:
+    """
+    Select columns safely for Streamlit rendering:
+    - dedupe column names while preserving order
+    - ignore missing columns
+    """
+    unique = unique_ordered([col for col in columns if col in df.columns])
+    return df[unique]
